@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selamat Ulang Tahun 🎆</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#050b1f;--bg2:#16255a;--rose:#ff9f1c;--gold:#ffe9a8;--paper:#fff8e7;--ink:#b34700}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:grid;place-items:center;padding:16px;overflow-x:hidden;color:#fff;font-family:'Nunito',system-ui,sans-serif;
+background:radial-gradient(circle at 20% 15%,var(--bg2),var(--bg1) 70%) fixed}
+/* ✏️ Mau pakai foto latar? isi URL di CONFIG.fotoLatar */
+#bg{position:fixed;inset:0;background-size:cover;background-position:center;opacity:.25;z-index:0}
+canvas#fw{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hal{display:none;position:relative;z-index:2;width:min(400px,100%);text-align:center;padding:26px 22px;border-radius:26px;
+background:rgba(255,255,255,.09);backdrop-filter:blur(12px);border:1.5px solid rgba(255,227,194,.3);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.hal.aktif{display:block;animation:muncul .6s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes muncul{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:none}}
+.stiker{font-size:3.6rem;width:96px;height:96px;margin:0 auto 14px;display:grid;place-items:center;border-radius:50%;background:var(--paper);box-shadow:0 0 30px rgba(255,227,194,.4);animation:goyang 3s ease-in-out infinite}
+.stiker img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+@keyframes goyang{50%{transform:rotate(6deg) scale(1.05)}}
+h1{font-family:'Caveat',cursive;font-size:2.3rem;color:var(--gold);margin-bottom:6px}
+h2{font-size:1.15rem;margin-bottom:6px;color:var(--gold)}
+p{font-size:1rem;line-height:1.5;margin-bottom:12px}
+button{font:800 .95rem 'Nunito',sans-serif;cursor:pointer;color:#3b0f25;background:linear-gradient(135deg,var(--gold),var(--rose));border:0;border-radius:999px;padding:10px 24px;margin:8px 4px 0;box-shadow:0 6px 18px rgba(255,159,28,.4);transition:transform .2s}
+button:hover{transform:translateY(-3px) scale(1.04)}
+button:focus-visible,.kartu:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+button.alt{background:rgba(255,255,255,.18);color:#fff;box-shadow:none}
+.sembunyi{display:none!important}
+/* Amplop */
+.env{position:relative;width:190px;height:125px;margin:90px auto 30px;background:#c2410c;border-radius:6px}
+.surat{position:absolute;left:12px;right:12px;top:8px;height:105px;background:var(--paper);border-radius:6px;display:grid;place-items:center;
+font:700 1.5rem 'Caveat',cursive;color:var(--ink);transition:transform .7s .35s ease;z-index:1;padding:8px}
+.saku{position:absolute;inset:0;background:#f97316;clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%);border-radius:6px;z-index:2}
+.tutup{position:absolute;left:0;right:0;top:0;height:68px;background:#9a3412;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .5s;z-index:3}
+.env.buka .tutup{transform:rotateX(180deg);z-index:0}
+.env.buka .surat{transform:translateY(-78px) rotate(-3deg)}
+/* Slider */
+input[type=range]{width:90%;accent-color:var(--rose);margin:14px 0 6px}
+output{display:block;font:800 2rem 'Nunito';color:var(--rose);margin-bottom:6px}
+/* Game */
+.papan{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;justify-items:center;margin:14px auto}
+.kartu{width:58px;height:58px;perspective:600px;cursor:pointer;border:0;background:none;padding:0;margin:0;box-shadow:none}
+.dalam{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.kartu.balik .dalam{transform:rotateY(180deg)}
+.depan,.belakang{position:absolute;inset:0;display:grid;place-items:center;border-radius:14px;backface-visibility:hidden}
+.depan{background:linear-gradient(135deg,rgba(255,227,194,.35),rgba(255,159,28,.4));border:1.5px solid rgba(255,255,255,.4);font-size:1.1rem}
+.belakang{background:var(--paper);transform:rotateY(180deg);font-size:1.7rem}
+.kartu.cocok .belakang{background:var(--gold)}
+#kotakPesan{min-height:44px;font:700 1.35rem 'Caveat',cursive;color:var(--gold);line-height:1.2}
+/* Pesan akhir */
+.teks{min-height:120px;max-height:240px;overflow-y:auto;scrollbar-width:none}
+#t1{font-family:'Caveat',cursive;font-size:1.7rem;color:var(--gold)}
+#t3{font-size:.95rem;opacity:.9;margin-top:10px}
+@media (max-width:420px){.kartu{width:52px;height:52px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<canvas id="fw"></canvas>
+
+<!-- Halaman 1: Sapaan -->
+<section id="h1" class="hal aktif">
+  <div class="stiker" id="s1"></div>
+  <h1 id="salam"></h1>
+  <p id="subSalam"></p>
+  <button id="btnMulai">Mulai</button>
+</section>
+
+<!-- Halaman 2: Amplop -->
+<section id="h2" class="hal">
+  <div class="env" id="env">
+    <div class="surat" id="isiSurat"></div>
+    <div class="saku"></div>
+    <div class="tutup"></div>
+  </div>
+  <button id="btnBuka">Buka amplop</button>
+</section>
+
+<!-- Halaman 3: Tahun lahir -->
+<section id="h3" class="hal">
+  <div class="stiker" id="s2"></div>
+  <h2 id="tanyaTahun"></h2>
+  <input type="range" id="tahun" aria-label="Tahun lahir">
+  <output id="outTahun"></output>
+  <button id="btnLanjut">Lanjutkan</button>
+</section>
+
+<!-- Halaman 4: Memory game -->
+<section id="h4" class="hal">
+  <h2 id="judulGame"></h2>
+  <p id="petunjukGame"></p>
+  <div id="kotakPesan" aria-live="polite"></div>
+  <div class="papan" id="papan"></div>
+  <p id="statusGame"></p>
+</section>
+
+<!-- Halaman 5: Pesan akhir -->
+<section id="h5" class="hal">
+  <div class="stiker" id="s3"></div>
+  <div class="teks">
+    <p id="t1"></p>
+    <p id="t2"></p>
+    <p id="t3"></p>
+  </div>
+  <button id="btnBalas">Balas</button>
+  <button id="btnUlang" class="alt">Ulangi</button>
+</section>
+
+<script>
+/* =====================================================================
+   ✏️ BAGIAN YANG BISA KAMU UBAH — cukup edit teks di dalam tanda kutip.
+   Jangan hapus tanda koma (,) di ujung baris ya.
+   ===================================================================== */
+const CONFIG = {
+  judulTab: "Selamat Ulang Tahun 🎆",
+
+  // Nama orang yang dituju. Dipakai di pesan akhir lewat kode {nama}
+  nama: "Siti",
+
+  // Pengirim (tampil di penutup pesan)
+  pengirim: "Dean",
+
+  // Nomor WhatsApp untuk tombol "Balas", format 62 tanpa + dan tanpa 0 di depan.
+  // Contoh: "6281234567890". Kosongkan "" kalau mau pilih kontak sendiri.
+  nomorWA: "",
+  pesanBalasWA: "--",
+
+  // Foto latar (opsional). Contoh: "foto-kita.jpg" atau link gambar. Kosong = pakai gradasi.
+  fotoLatar: "",
+
+  // Efek latar: true = nyala, false = mati
+  kembangApi: true,   // roket yang meledak di langit
+  petasan: true,      // letupan beruntun di dekat bawah layar
+  // Warna ledakan, format "R,G,B". Tambah atau hapus sesukamu.
+  warnaLedakan: ["255,159,28", "255,233,168", "255,255,255", "56,189,248", "248,113,113"],
+
+  // Stiker/ikon bulat di atas kartu. Boleh emoji, atau isi link gambar/GIF di bagian "gambar".
+  stiker: [
+    { emoji: "🥳", gambar: "" },   // halaman 1
+    { emoji: "🤔", gambar: "" },   // halaman 3
+    { emoji: "🎂", gambar: "" }    // halaman 5
+  ],
+
+  // Halaman 1
+  salam: "Alooo Kamuuu! 🥳",
+  subSalam: "Ada kejutan kecil buat kamu.",
+  tombolMulai: "Mulai",
+
+  // Halaman 2 (tulisan di surat yang keluar dari amplop)
+  isiSurat: "Untukmu ✨",
+  tombolBuka: "Buka amplop",
+
+  // Halaman 3
+  tanyaTahun: "Tahun lahir kamu? 🤔",
+  tahunMin: 1980,
+  tahunMax: 2015,
+  tahunAwal: 2000,
+  tombolLanjut: "Lanjutkan",
+
+  // Halaman 4 (memory game)
+  judulGame: "Memory Game 🎮",
+  petunjukGame: "Cocokkan kartu-kartu ini ya! 😋 Tiap pasangan yang cocok membuka sepenggal kata.",
+
+  // 6 pasang kartu. Urutan = urutan kalimat yang tersusun saat dicocokkan.
+  kartu: [
+    { icon: "🎉", pesan: "Semoga di usia barumu" },
+    { icon: "🎂", pesan: "kamu selalu sehat," },
+    { icon: "🎁", pesan: "sukses di setiap langkah," },
+    { icon: "🎈", pesan: "dan penuh tawa" },
+    { icon: "🎊", pesan: "setiap harinya." },
+    { icon: "🎆", pesan: "Selamat ulang tahun!" }
+  ],
+
+  // Halaman 5 — pesan akhir. Kode yang bisa dipakai: {nama}, {usia}, {pengirim}
+  teksUcapan: "Selamat ulang tahun, {nama}! 🎂",
+  pesanAkhir: "Hari ini kamu genap {usia} tahun. Semoga dipermudah semua urusan pekerjaan nya dan semua doa dan harapanmu satu per satu terkabul, aamiin..",
+  teksLucu: "P.S. Umur nambah, tapi senyummu jangan sampai berkurang ya 😆 — {pengirim}",
+  tombolBalas: "Balas",
+  tombolUlang: "Ulangi"
+};
+/* ===================== SELESAI — di bawah ini kode program ===================== */
+
+const $ = id => document.getElementById(id);
+const CFG = CONFIG;
+document.title = CFG.judulTab;
+if (CFG.fotoLatar) $('bg').style.backgroundImage = `url('${CFG.fotoLatar}')`;
+
+function isiStiker(el, s){ el.innerHTML = s.gambar ? `<img src="${s.gambar}" alt="">` : s.emoji; }
+isiStiker($('s1'), CFG.stiker[0]); isiStiker($('s2'), CFG.stiker[1]); isiStiker($('s3'), CFG.stiker[2]);
+$('salam').textContent = CFG.salam; $('subSalam').textContent = CFG.subSalam;
+$('btnMulai').textContent = CFG.tombolMulai; $('btnBuka').textContent = CFG.tombolBuka;
+$('isiSurat').textContent = CFG.isiSurat; $('tanyaTahun').textContent = CFG.tanyaTahun;
+$('btnLanjut').textContent = CFG.tombolLanjut; $('judulGame').textContent = CFG.judulGame;
+$('petunjukGame').textContent = CFG.petunjukGame;
+$('btnBalas').textContent = CFG.tombolBalas; $('btnUlang').textContent = CFG.tombolUlang;
+
+const tahun = $('tahun');
+tahun.min = CFG.tahunMin; tahun.max = CFG.tahunMax; tahun.value = CFG.tahunAwal;
+$('outTahun').textContent = tahun.value;
+tahun.oninput = () => $('outTahun').textContent = tahun.value;
+
+function pindahHal(n){
+  document.querySelectorAll('.hal').forEach(h => h.classList.remove('aktif'));
+  $('h' + n).classList.add('aktif');
+  intensitas = n === 5 ? 2.5 : 1;   // pesan akhir = puncak kembang api
+  if (n === 4) mulaiGame();
+  if (n === 5) mulaiAkhir();
+}
+
+/* Amplop */
+$('btnMulai').onclick = () => pindahHal(2);
+$('btnBuka').onclick = () => {
+  $('env').classList.add('buka');
+  $('btnBuka').classList.add('sembunyi');
+  setTimeout(() => pindahHal(3), 2000);
+};
+$('btnLanjut').onclick = () => pindahHal(4);
+
+/* Memory game */
+let terbuka = [], cocok = 0, kunci = false;
+function acak(a){ for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function mulaiGame(){
+  terbuka = []; cocok = 0; kunci = false;
+  $('kotakPesan').textContent = ''; $('statusGame').textContent = '';
+  const papan = $('papan'); papan.innerHTML = '';
+  const dek = acak(CFG.kartu.flatMap((k, i) => [{...k, id: i}, {...k, id: i}]));
+  dek.forEach(k => {
+    const el = document.createElement('button');
+    el.className = 'kartu'; el.setAttribute('aria-label', 'Kartu tertutup');
+    el.innerHTML = `<div class="dalam"><div class="depan">❔</div><div class="belakang">${k.icon}</div></div>`;
+    el.onclick = () => balik(el, k);
+    papan.appendChild(el);
+  });
+}
+
+function balik(el, k){
+  if (kunci || el.classList.contains('balik')) return;
+  el.classList.add('balik');
+  terbuka.push({el, k});
+  if (terbuka.length < 2) return;
+  const [a, b] = terbuka;
+  if (a.k.id === b.k.id){
+    a.el.classList.add('cocok'); b.el.classList.add('cocok');
+    cocok++; terbuka = [];
+    $('kotakPesan').textContent += (cocok > 1 ? ' ' : '') + a.k.pesan;
+    if (cocok === CFG.kartu.length){
+      $('statusGame').textContent = 'Semua cocok! 🎆';
+      setTimeout(() => pindahHal(5), 1600);
+    }
+  } else {
+    kunci = true;
+    setTimeout(() => {
+      a.el.classList.remove('balik'); b.el.classList.remove('balik');
+      terbuka = []; kunci = false;
+    }, 900);
+  }
+}
+
+/* Pesan akhir: efek mengetik */
+let sesiKetik = 0;
+const isi = t => t.replace(/{nama}/g, CFG.nama).replace(/{pengirim}/g, CFG.pengirim)
+                  .replace(/{usia}/g, new Date().getFullYear() - Number(tahun.value));
+
+async function ketik(el, teks, jeda){
+  const sesi = sesiKetik;
+  el.textContent = '';
+  for (const huruf of teks){
+    if (sesi !== sesiKetik) return;
+    el.textContent += huruf;
+    await new Promise(r => setTimeout(r, jeda));
+  }
+}
+
+async function mulaiAkhir(){
+  sesiKetik++;
+  await ketik($('t1'), isi(CFG.teksUcapan), 55);
+  await ketik($('t2'), isi(CFG.pesanAkhir), 28);
+  await ketik($('t3'), isi(CFG.teksLucu), 28);
+}
+
+/* Latar: kembang api + petasan (jalan terus di semua halaman) */
+const cv = $('fw'), cx = cv.getContext('2d');
+let roket = [], bintik = [], intensitas = 1;
+function ukur(){ cv.width = innerWidth; cv.height = innerHeight; }
+addEventListener('resize', ukur); ukur();
+const acakWarna = () => CFG.warnaLedakan[Math.floor(Math.random() * CFG.warnaLedakan.length)];
+
+function ledak(x, y, w, cincin){
+  const n = cincin ? 36 : 44;
+  for (let i = 0; i < n; i++){
+    const a = cincin ? i / n * 6.283 : Math.random() * 6.283;
+    const s = cincin ? 4 : Math.random() * 5 + 1.5;
+    bintik.push({x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, a: 1, u: 1.8, d: .012 + Math.random() * .008, w, g: .05});
+  }
+}
+
+function petasan(){
+  const x0 = Math.random() * cv.width * .7 + cv.width * .1;
+  const y0 = cv.height - 30 - Math.random() * 60;
+  for (let i = 0; i < 9; i++) setTimeout(() => {
+    const x = x0 + i * 24;
+    bintik.push({x, y: y0, vx: 0, vy: 0, a: 1, u: 16, d: .3, w: '255,255,255', g: 0});   // kilatan
+    for (let k = 0; k < 12; k++){
+      const a = Math.random() * 6.283, s = Math.random() * 4 + 1.5;
+      bintik.push({x, y: y0, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1, a: 1, u: 1.5, d: .06, w: k % 2 ? '255,159,28' : '255,233,168', g: .08});
+    }
+  }, i * 110);
+}
+
+function jadwalPetasan(){
+  if (CFG.petasan && !document.hidden) petasan();
+  setTimeout(jadwalPetasan, (3000 + Math.random() * 3000) / intensitas);
+}
+
+function putar(){
+  if (!document.hidden){
+    cx.globalCompositeOperation = 'destination-out';
+    cx.fillStyle = 'rgba(0,0,0,.22)'; cx.fillRect(0, 0, cv.width, cv.height);   // jejak cahaya memudar
+    cx.globalCompositeOperation = 'lighter';
+    if (CFG.kembangApi && Math.random() < .025 * intensitas)
+      roket.push({x: Math.random() * cv.width, y: cv.height, ty: cv.height * (.15 + Math.random() * .4), w: acakWarna()});
+    roket = roket.filter(r => {
+      r.y -= 9; cx.fillStyle = 'rgb(255,233,168)'; cx.fillRect(r.x, r.y, 2, 8);
+      if (r.y <= r.ty){ ledak(r.x, r.y, r.w, Math.random() < .3); return false; }
+      return true;
+    });
+    bintik = bintik.filter(p => p.a > 0);
+    bintik.forEach(p => {
+      cx.fillStyle = `rgba(${p.w},${p.a})`;
+      cx.beginPath(); cx.arc(p.x, p.y, p.u, 0, 6.283); cx.fill();
+      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= .985; p.a -= p.d;
+    });
+  }
+  requestAnimationFrame(putar);
+}
+putar();
+setTimeout(jadwalPetasan, 800);
+
+/* Tombol Balas (buka WhatsApp) & Ulangi */
+$('btnBalas').onclick = () => {
+  const teks = encodeURIComponent(CFG.pesanBalasWA);
+  window.open(`https://wa.me/${CFG.nomorWA}?text=${teks}`, '_blank');
+};
+$('btnUlang').onclick = () => location.reload();
+</script>
+</body>
+</html>
